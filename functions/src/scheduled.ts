@@ -82,6 +82,8 @@ export const scheduledCompetitorWatch = onSchedule(
         timestamp: event.scheduleTime,
       });
 
+      // TODO: Configure default competitors list in Firestore or environment
+      // For now, the flow uses its own default list
       const result = await competitorWatchFlow({
         competitors: [],
         checkType: "quick",
