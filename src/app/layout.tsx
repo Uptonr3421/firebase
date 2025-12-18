@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Prometheus AI",
@@ -39,7 +36,7 @@ export default function RootLayout({
           content="black-translucent"
         />
       </head>
-      <body className={`${inter.className} bg-black text-white antialiased`}>
+      <body className="bg-black text-white antialiased font-sans">
         {children}
       </body>
     </html>
