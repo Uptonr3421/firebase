@@ -41,8 +41,11 @@ button {
   touch-action: manipulation;
 }
 
-/* Smooth scroll for iOS */
-* {
+/* Smooth scroll for iOS - applied only to scrollable containers */
+.overflow-auto,
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-scroll {
   -webkit-overflow-scrolling: touch;
 }
 

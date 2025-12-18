@@ -222,8 +222,8 @@ export default function FlowResultModal({ result, onClose }: FlowResultModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="bg-zinc-900 rounded-t-3xl sm:rounded-3xl border-t border-x sm:border border-zinc-800 w-full sm:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col safe-bottom">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm safe-bottom">
+      <div className="bg-zinc-900 rounded-t-3xl sm:rounded-3xl border-t border-x sm:border border-zinc-800 w-full sm:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-start justify-between p-5 sm:p-6 border-b border-zinc-800">
           <div className="flex-1 pr-4">

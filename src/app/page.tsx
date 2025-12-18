@@ -239,7 +239,9 @@ export default function Home() {
                     {activity.icon}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-base font-medium truncate">{activity.title}</p>
+                    <p className="text-base font-medium line-clamp-2" title={activity.title}>
+                      {activity.title}
+                    </p>
                     <p className="text-sm text-gray-500">
                       {formatTimestamp(activity.timestamp)}
                     </p>
