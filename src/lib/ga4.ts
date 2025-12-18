@@ -71,9 +71,6 @@ function getPropertyId(property: string): string {
  * Convert date range option to GA4 date range format
  */
 function getDateRange(dateRange: DateRangeOption): { startDate: string; endDate: string } {
-  const today = new Date();
-  const formatDate = (date: Date) => date.toISOString().split('T')[0];
-
   switch (dateRange) {
     case 'today':
       return { startDate: 'today', endDate: 'today' };
@@ -305,6 +302,11 @@ export async function getAggregatedAnalyticsData(
       getAnalyticsData(property, dateRange)
     );
     const allData = await Promise.all(dataPromises);
+
+    // Guard against empty data
+    if (allData.length === 0) {
+      throw new Error('No analytics data returned for any property');
+    }
 
     // Aggregate the data
     const aggregated: GA4AnalyticsData = {
