@@ -29,6 +29,10 @@
   - Use `@genkit-ai/googleai` for Gemini models.
   - Use `firebase-functions/v2` (NOT v1).
 - **Vector Search:** If `findNearest` fails, check if the Firestore Vector Index is created in `firestore.indexes.json`.
+- **Build Requirements:** 
+  - NO external network dependencies during build (no Google Fonts, no external CDNs).
+  - Use standard Tailwind directives: `@tailwind base/components/utilities`.
+  - Use system fonts only (configured in globals.css).
 
 ### 4. CODE STYLE FOR DEBUGGING
 
@@ -83,6 +87,7 @@ import { getFirestore } from "firebase-admin/firestore";
 // ❌ WRONG IMPORTS (Never use these in Cloud Functions)
 // import { getFirestore } from 'firebase/firestore';  // Client SDK
 // import * as functions from 'firebase-functions';     // v1 syntax
+// import { Inter } from 'next/font/google';            // External network at build
 ```
 
 ---

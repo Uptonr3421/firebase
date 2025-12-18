@@ -35,7 +35,8 @@ user: contact@bespokeethos.com
 | Database | Firestore + Vector Search |
 | Functions | Cloud Functions 2nd Gen |
 | Validation | Zod schemas |
-| UI | Tailwind CSS + Shadcn/UI |
+| UI | Tailwind CSS (standard directives) |
+| Fonts | System fonts (no Google Fonts) |
 | Secrets | Google Secret Manager |
 
 ---
@@ -86,6 +87,9 @@ process.env.API_KEY
 
 // Google AI instead of Vertex (for production)
 import { googleAI } from '@genkit-ai/googleai';
+
+// Google Fonts or external CDN resources at build time
+import { Inter } from 'next/font/google';  // Use system fonts instead
 ```
 
 ---
@@ -141,6 +145,14 @@ export const myFlow = defineFlow(
   }
 );
 ```
+
+---
+
+## BUILD & DEPLOYMENT CONSTRAINTS
+* **No external network access during build** - Build must work offline
+* **Use standard Tailwind directives** - `@tailwind base/components/utilities` (NOT `@import "tailwindcss"`)
+* **System fonts only** - No Google Fonts or CDN fonts at build time
+* **Minimize plugin dependencies** - Only use plugins explicitly in package.json
 
 ---
 
