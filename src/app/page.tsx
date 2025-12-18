@@ -3,21 +3,16 @@
 import { useState, useEffect } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import FlowResultModal from '@/components/FlowResultModal';
+import type { Activity, FlowResult } from '@/types/flows';
 
-interface Activity {
-  id: string;
-  flowName: string;
-  title: string;
-  timestamp: string;
-  icon: string;
-  color: string;
-}
-
-interface FlowResult {
-  flowName: string;
-  data: any;
-  timestamp: string;
-}
+// Color mapping for activity icons - ensures Tailwind classes are included in build
+const colorClasses = {
+  blue: 'bg-blue-500/20 text-blue-400',
+  purple: 'bg-purple-500/20 text-purple-400',
+  green: 'bg-green-500/20 text-green-400',
+  yellow: 'bg-yellow-500/20 text-yellow-400',
+  red: 'bg-red-500/20 text-red-400',
+} as const;
 
 export default function Home() {
   const [loadingFlow, setLoadingFlow] = useState<string | null>(null);
@@ -44,7 +39,12 @@ export default function Home() {
     }
   }, [recentActivity]);
 
-  const addActivity = (flowName: string, title: string, icon: string, color: string) => {
+  const addActivity = (
+    flowName: string,
+    title: string,
+    icon: string,
+    color: Activity['color']
+  ) => {
     const newActivity: Activity = {
       id: Date.now().toString(),
       flowName,
@@ -60,7 +60,7 @@ export default function Home() {
     flowName: string,
     title: string,
     icon: string,
-    color: string,
+    color: Activity['color'],
     input: any = {}
   ) => {
     setLoadingFlow(flowName);
@@ -232,7 +232,7 @@ export default function Home() {
               {recentActivity.map((activity) => (
                 <div key={activity.id} className="flex items-center gap-3">
                   <span
-                    className={`w-8 h-8 bg-${activity.color}-500/20 text-${activity.color}-400 rounded-lg flex items-center justify-center text-sm`}
+                    className={`w-8 h-8 ${colorClasses[activity.color]} rounded-lg flex items-center justify-center text-sm`}
                   >
                     {activity.icon}
                   </span>

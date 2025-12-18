@@ -1,10 +1,14 @@
 'use client';
 
-interface FlowResult {
-  flowName: string;
-  data: any;
-  timestamp: string;
-}
+import type {
+  FlowResult,
+  MarketingBriefData,
+  CompetitorWatchData,
+  ContentDrafterData,
+  OpportunityScannerData,
+  CompetitorChange,
+  Opportunity,
+} from '@/types/flows';
 
 interface FlowResultModalProps {
   result: FlowResult | null;
@@ -18,18 +22,19 @@ export default function FlowResultModal({ result, onClose }: FlowResultModalProp
     const { flowName, data } = result;
 
     switch (flowName) {
-      case 'marketing-brief':
+      case 'marketing-brief': {
+        const briefData = data as MarketingBriefData;
         return (
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-2">Summary</h3>
-              <p className="text-white">{data.summary}</p>
+              <p className="text-white">{briefData.summary}</p>
             </div>
             
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-2">Highlights</h3>
               <ul className="space-y-2">
-                {data.highlights?.map((highlight: string, idx: number) => (
+                {briefData.highlights?.map((highlight, idx) => (
                   <li key={idx} className="flex items-start gap-2">
                     <span className="text-blue-400 mt-1">•</span>
                     <span className="text-white">{highlight}</span>
@@ -41,7 +46,7 @@ export default function FlowResultModal({ result, onClose }: FlowResultModalProp
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-2">Recommendations</h3>
               <ul className="space-y-2">
-                {data.recommendations?.map((rec: string, idx: number) => (
+                {briefData.recommendations?.map((rec, idx) => (
                   <li key={idx} className="flex items-start gap-2">
                     <span className="text-green-400 mt-1">→</span>
                     <span className="text-white">{rec}</span>
@@ -53,37 +58,39 @@ export default function FlowResultModal({ result, onClose }: FlowResultModalProp
             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
               <div>
                 <p className="text-xs text-gray-500">Sessions</p>
-                <p className="text-lg font-medium">{data.metrics?.totalSessions?.toLocaleString()}</p>
+                <p className="text-lg font-medium">{briefData.metrics?.totalSessions?.toLocaleString()}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500">Users</p>
-                <p className="text-lg font-medium">{data.metrics?.totalUsers?.toLocaleString()}</p>
+                <p className="text-lg font-medium">{briefData.metrics?.totalUsers?.toLocaleString()}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500">Bounce Rate</p>
-                <p className="text-lg font-medium">{data.metrics?.bounceRate}%</p>
+                <p className="text-lg font-medium">{briefData.metrics?.bounceRate}%</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500">Avg Duration</p>
-                <p className="text-lg font-medium">{data.metrics?.avgSessionDuration}s</p>
+                <p className="text-lg font-medium">{briefData.metrics?.avgSessionDuration}s</p>
               </div>
             </div>
           </div>
         );
+      }
 
-      case 'competitor-watch':
+      case 'competitor-watch': {
+        const compData = data as CompetitorWatchData;
         return (
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-2">Summary</h3>
-              <p className="text-white">{data.summary}</p>
+              <p className="text-white">{compData.summary}</p>
             </div>
 
-            {data.changes && data.changes.length > 0 && (
+            {compData.changes && compData.changes.length > 0 && (
               <div>
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Changes Detected</h3>
                 <div className="space-y-3">
-                  {data.changes.map((change: any, idx: number) => (
+                  {compData.changes.map((change, idx) => (
                     <div key={idx} className="bg-zinc-800/50 rounded-lg p-3">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium">{change.competitor}</span>
@@ -108,34 +115,36 @@ export default function FlowResultModal({ result, onClose }: FlowResultModalProp
             )}
           </div>
         );
+      }
 
-      case 'content-drafter':
+      case 'content-drafter': {
+        const contentData = data as ContentDrafterData;
         return (
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-2">Title</h3>
-              <p className="text-lg font-medium text-white">{data.title}</p>
+              <p className="text-lg font-medium text-white">{contentData.title}</p>
             </div>
 
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-2">Meta Description</h3>
-              <p className="text-sm text-gray-300">{data.metaDescription}</p>
+              <p className="text-sm text-gray-300">{contentData.metaDescription}</p>
             </div>
 
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-2">Content</h3>
               <div className="bg-zinc-800/50 rounded-lg p-4 max-h-64 overflow-y-auto">
                 <pre className="text-sm text-white whitespace-pre-wrap font-sans">
-                  {data.content}
+                  {contentData.content}
                 </pre>
               </div>
             </div>
 
-            {data.suggestedKeywords && data.suggestedKeywords.length > 0 && (
+            {contentData.suggestedKeywords && contentData.suggestedKeywords.length > 0 && (
               <div>
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Keywords</h3>
                 <div className="flex flex-wrap gap-2">
-                  {data.suggestedKeywords.map((keyword: string, idx: number) => (
+                  {contentData.suggestedKeywords.map((keyword, idx) => (
                     <span
                       key={idx}
                       className="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded"
@@ -148,31 +157,33 @@ export default function FlowResultModal({ result, onClose }: FlowResultModalProp
             )}
           </div>
         );
+      }
 
-      case 'opportunity-scanner':
+      case 'opportunity-scanner': {
+        const oppData = data as OpportunityScannerData;
         return (
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-gray-400 mb-2">Summary</h3>
-              <p className="text-white">{data.summary}</p>
+              <p className="text-white">{oppData.summary}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-zinc-800/50 rounded-lg p-3">
                 <p className="text-xs text-gray-500">Total Found</p>
-                <p className="text-2xl font-bold text-blue-400">{data.totalFound}</p>
+                <p className="text-2xl font-bold text-blue-400">{oppData.totalFound}</p>
               </div>
               <div className="bg-zinc-800/50 rounded-lg p-3">
                 <p className="text-xs text-gray-500">High Priority</p>
-                <p className="text-2xl font-bold text-green-400">{data.highPriority}</p>
+                <p className="text-2xl font-bold text-green-400">{oppData.highPriority}</p>
               </div>
             </div>
 
-            {data.opportunities && data.opportunities.length > 0 && (
+            {oppData.opportunities && oppData.opportunities.length > 0 && (
               <div>
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Opportunities</h3>
                 <div className="space-y-3">
-                  {data.opportunities.map((opp: any, idx: number) => (
+                  {oppData.opportunities.map((opp, idx) => (
                     <div key={idx} className="bg-zinc-800/50 rounded-lg p-3">
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-medium text-white">{opp.title}</h4>
@@ -197,6 +208,7 @@ export default function FlowResultModal({ result, onClose }: FlowResultModalProp
             )}
           </div>
         );
+      }
 
       default:
         return (
