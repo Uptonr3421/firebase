@@ -5,6 +5,7 @@
 
 import { z } from "zod";
 import { ai, models } from "../genkit";
+import { getAggregatedAnalyticsData, setPropertyIds } from "../../lib/ga4";
 
 const MarketingBriefInput = z.object({
   dateRange: z
@@ -35,20 +36,27 @@ export const marketingBriefFlow = ai.defineFlow(
   },
   async (input) => {
     try {
-      // TODO: Replace with actual GA4 API call
-      const mockAnalyticsData = {
-        sessions: 1250,
-        users: 890,
-        bounceRate: 42.5,
-        avgDuration: 185,
-        topPages: ["/services", "/about", "/contact"],
-        topSources: ["google", "direct", "linkedin"],
-      };
+      // Initialize GA4 property IDs from environment variables / Secret Manager
+      // These should be set via Secret Manager and accessed through ADC
+      const bespokePropertyId = process.env.GA4_PROPERTY_ID_BESPOKE || "";
+      const gmfgPropertyId = process.env.GA4_PROPERTY_ID_GMFG || "";
+      
+      if (!bespokePropertyId || !gmfgPropertyId) {
+        throw new Error("GA4 property IDs not configured in Secret Manager");
+      }
+      
+      setPropertyIds(bespokePropertyId, gmfgPropertyId);
+
+      // Fetch real analytics data from GA4 API (with 6-hour caching)
+      const analyticsData = await getAggregatedAnalyticsData(
+        input.properties,
+        input.dateRange
+      );
 
       const prompt = `You are an executive briefing AI. Analyze this GA4 data and create a concise morning brief.
 
 Data for ${input.properties.join(" and ")} (${input.dateRange}):
-${JSON.stringify(mockAnalyticsData, null, 2)}
+${JSON.stringify(analyticsData, null, 2)}
 
 Provide:
 1. A 2-3 sentence executive summary
@@ -67,19 +75,19 @@ Be concise, data-driven, and focus on business impact.`;
       return {
         summary: text.split("\n")[0] || "Daily metrics within normal range.",
         highlights: [
-          `${mockAnalyticsData.sessions} sessions this period`,
-          `${mockAnalyticsData.users} unique users`,
-          `Top traffic source: ${mockAnalyticsData.topSources[0]}`,
+          `${analyticsData.sessions} sessions this period`,
+          `${analyticsData.users} unique users`,
+          `Top traffic source: ${analyticsData.topSources[0] || "N/A"}`,
         ],
         recommendations: [
           "Continue monitoring bounce rate trends",
           "Optimize top landing pages for conversion",
         ],
         metrics: {
-          totalSessions: mockAnalyticsData.sessions,
-          totalUsers: mockAnalyticsData.users,
-          bounceRate: mockAnalyticsData.bounceRate,
-          avgSessionDuration: mockAnalyticsData.avgDuration,
+          totalSessions: analyticsData.sessions,
+          totalUsers: analyticsData.users,
+          bounceRate: analyticsData.bounceRate,
+          avgSessionDuration: analyticsData.avgDuration,
         },
         confidence: 0.92,
         generatedAt: new Date().toISOString(),
