@@ -3,10 +3,17 @@ import { opportunityScannerFlow } from '@/ai/flows/opportunity-scanner';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
+    
+    // Provide default input if not specified
+    const input = {
+      sources: body.sources || ['nglcc', 'news'],
+      industry: body.industry || 'consulting',
+      minRelevanceScore: body.minRelevanceScore || 0.7,
+    };
     
     // Run the Genkit flow with the provided input
-    const result = await opportunityScannerFlow(body);
+    const result = await opportunityScannerFlow(input);
     
     return NextResponse.json({
       success: true,

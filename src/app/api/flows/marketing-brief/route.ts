@@ -3,10 +3,16 @@ import { marketingBriefFlow } from '@/ai/flows/marketing-brief';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
+    
+    // Provide default input if not specified
+    const input = {
+      dateRange: body.dateRange || 'last7days',
+      properties: body.properties || ['bespoke-ethos', 'gmfg'],
+    };
     
     // Run the Genkit flow with the provided input
-    const result = await marketingBriefFlow(body);
+    const result = await marketingBriefFlow(input);
     
     return NextResponse.json({
       success: true,
