@@ -8,9 +8,21 @@ import { selfHealingFlow } from "@/ai/flows";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    // Parse and validate JSON body
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return NextResponse.json(
+        {
+          error: "Invalid JSON in request body",
+          message: parseError instanceof Error ? parseError.message : String(parseError),
+        },
+        { status: 400 }
+      );
+    }
 
-    // Run the flow
+    // Run the flow (Genkit validates input schema automatically)
     const result = await selfHealingFlow(body);
 
     return NextResponse.json(result, { status: 200 });
