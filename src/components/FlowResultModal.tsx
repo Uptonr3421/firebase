@@ -1,0 +1,249 @@
+'use client';
+
+interface FlowResult {
+  flowName: string;
+  data: any;
+  timestamp: string;
+}
+
+interface FlowResultModalProps {
+  result: FlowResult | null;
+  onClose: () => void;
+}
+
+export default function FlowResultModal({ result, onClose }: FlowResultModalProps) {
+  if (!result) return null;
+
+  const renderContent = () => {
+    const { flowName, data } = result;
+
+    switch (flowName) {
+      case 'marketing-brief':
+        return (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">Summary</h3>
+              <p className="text-white">{data.summary}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">Highlights</h3>
+              <ul className="space-y-2">
+                {data.highlights?.map((highlight: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-blue-400 mt-1">•</span>
+                    <span className="text-white">{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">Recommendations</h3>
+              <ul className="space-y-2">
+                {data.recommendations?.map((rec: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-green-400 mt-1">→</span>
+                    <span className="text-white">{rec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-800">
+              <div>
+                <p className="text-xs text-gray-500">Sessions</p>
+                <p className="text-lg font-medium">{data.metrics?.totalSessions?.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Users</p>
+                <p className="text-lg font-medium">{data.metrics?.totalUsers?.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Bounce Rate</p>
+                <p className="text-lg font-medium">{data.metrics?.bounceRate}%</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Avg Duration</p>
+                <p className="text-lg font-medium">{data.metrics?.avgSessionDuration}s</p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'competitor-watch':
+        return (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">Summary</h3>
+              <p className="text-white">{data.summary}</p>
+            </div>
+
+            {data.changes && data.changes.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Changes Detected</h3>
+                <div className="space-y-3">
+                  {data.changes.map((change: any, idx: number) => (
+                    <div key={idx} className="bg-zinc-800/50 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium">{change.competitor}</span>
+                        <span
+                          className={`text-xs px-2 py-1 rounded ${
+                            change.severity === 'high'
+                              ? 'bg-red-500/20 text-red-400'
+                              : change.severity === 'medium'
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-blue-500/20 text-blue-400'
+                          }`}
+                        >
+                          {change.severity}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-300">{change.description}</p>
+                      <p className="text-xs text-gray-500 mt-2">{change.changeType}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'content-drafter':
+        return (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">Title</h3>
+              <p className="text-lg font-medium text-white">{data.title}</p>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">Meta Description</h3>
+              <p className="text-sm text-gray-300">{data.metaDescription}</p>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">Content</h3>
+              <div className="bg-zinc-800/50 rounded-lg p-4 max-h-64 overflow-y-auto">
+                <pre className="text-sm text-white whitespace-pre-wrap font-sans">
+                  {data.content}
+                </pre>
+              </div>
+            </div>
+
+            {data.suggestedKeywords && data.suggestedKeywords.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Keywords</h3>
+                <div className="flex flex-wrap gap-2">
+                  {data.suggestedKeywords.map((keyword: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'opportunity-scanner':
+        return (
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">Summary</h3>
+              <p className="text-white">{data.summary}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-zinc-800/50 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Total Found</p>
+                <p className="text-2xl font-bold text-blue-400">{data.totalFound}</p>
+              </div>
+              <div className="bg-zinc-800/50 rounded-lg p-3">
+                <p className="text-xs text-gray-500">High Priority</p>
+                <p className="text-2xl font-bold text-green-400">{data.highPriority}</p>
+              </div>
+            </div>
+
+            {data.opportunities && data.opportunities.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Opportunities</h3>
+                <div className="space-y-3">
+                  {data.opportunities.map((opp: any, idx: number) => (
+                    <div key={idx} className="bg-zinc-800/50 rounded-lg p-3">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-medium text-white">{opp.title}</h4>
+                        <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded">
+                          {Math.round(opp.relevanceScore * 100)}%
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-300 mb-2">{opp.description}</p>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>{opp.source}</span>
+                        <span>{opp.estimatedValue}</span>
+                      </div>
+                      {opp.deadline && (
+                        <p className="text-xs text-yellow-400 mt-2">
+                          Deadline: {new Date(opp.deadline).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      default:
+        return (
+          <div className="bg-zinc-800/50 rounded-lg p-4">
+            <pre className="text-sm text-white whitespace-pre-wrap overflow-auto max-h-96">
+              {JSON.stringify(data, null, 2)}
+            </pre>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="bg-zinc-900 rounded-2xl border border-zinc-800 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-zinc-800">
+          <div>
+            <h2 className="text-xl font-bold capitalize">
+              {result.flowName.replace(/-/g, ' ')}
+            </h2>
+            <p className="text-sm text-gray-400">
+              {new Date(result.timestamp).toLocaleString()}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-zinc-800 transition-colors"
+            aria-label="Close modal"
+          >
+            <span className="text-2xl">×</span>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6">{renderContent()}</div>
+
+        {/* Footer */}
+        <div className="p-6 border-t border-zinc-800 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
