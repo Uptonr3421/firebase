@@ -1,147 +1,72 @@
 # 🔄 AGENT COORDINATION LOG
 
-> **Last Updated:** 2024-12-19 (Agent Opus-A)
-> **Purpose:** Track parallel agent activity to prevent conflicts
+> **Last Updated:** 2024-12-19
+> **Active Agents:** Opus-A (VS Code) + Cloud Agent (parallel)
+> **Mode:** Async dual-agent development
 
 ---
 
-## 📋 CURRENT STATUS
+## 📋 BUILD STATUS
 
-<<<<<<< Updated upstream
-| Build | Status | Last Check |
-|-------|--------|------------|
-| Next.js | ✅ Pass | 2024-12-19 |
-| Functions | ✅ Pass | 2024-12-19 |
-| Lint | ✅ Pass | 2024-12-19 |
-=======
-| Build     | Status  | Last Check |
-| --------- | ------- | ---------- |
-| Next.js   | ✅ Pass | 2024-12-19 |
-| Functions | ✅ Pass | 2024-12-19 |
-| Lint      | ✅ Pass | 2024-12-19 |
->>>>>>> Stashed changes
+| Build     | Status  | Verified |
+| --------- | ------- | -------- |
+| Next.js   | ✅ Pass | Now      |
+| Functions | ✅ Pass | Now      |
 
 ---
 
-## ✅ COMPLETED (This Session)
+## ✅ COMPLETED
 
-<<<<<<< Updated upstream
-| Item | Agent | File(s) | Notes |
-|------|-------|---------|-------|
-| Brand Positioning Flow | Opus-A | `src/ai/flows/brand-positioning.ts` | Full implementation with caching |
-| GA4 Scheduled Sync | Opus-A | `functions/src/scheduled.ts` | Every 6 hours, both properties |
-| Lead Capture Function | Opus-A | `functions/src/index.ts` | `submitLead` with scoring |
-| Contact Form UI | Opus-A | `src/components/ContactForm.tsx` | React form with validation |
-| Contact Page | Opus-A | `src/app/contact/page.tsx` | Full page layout |
-| Lead Submit API Route | Opus-A | `src/app/api/leads/submit/route.ts` | Calls Cloud Function |
-=======
-| Item                   | Agent  | File(s)                             | Notes                            |
-| ---------------------- | ------ | ----------------------------------- | -------------------------------- |
-| Brand Positioning Flow | Opus-A | `src/ai/flows/brand-positioning.ts` | Full implementation with caching |
-| GA4 Scheduled Sync     | Opus-A | `functions/src/scheduled.ts`        | Every 6 hours, both properties   |
-| Lead Capture Function  | Opus-A | `functions/src/index.ts`            | `submitLead` with scoring        |
-| Contact Form UI        | Opus-A | `src/components/ContactForm.tsx`    | React form with validation       |
-| Contact Page           | Opus-A | `src/app/contact/page.tsx`          | Full page layout                 |
-| Lead Submit API Route  | Opus-A | `src/app/api/leads/submit/route.ts` | Calls Cloud Function             |
->>>>>>> Stashed changes
+| Item                   | Agent  | Files                                                        |
+| ---------------------- | ------ | ------------------------------------------------------------ |
+| Brand Positioning Flow | Opus-A | `src/ai/flows/brand-positioning.ts`                          |
+| GA4 Scheduled Sync     | Opus-A | `functions/src/scheduled.ts`                                 |
+| Lead Capture + Scoring | Opus-A | `functions/src/index.ts`                                     |
+| Contact Form + Page    | Opus-A | `src/components/ContactForm.tsx`, `src/app/contact/page.tsx` |
+| Rate Limiting          | Opus-A | `functions/src/lib/rate-limit.ts`                            |
+| Slack Alerts           | Opus-A | `functions/src/lib/slack.ts`                                 |
+| Sentry Tracking        | Opus-A | `functions/src/lib/sentry.ts`                                |
+| Chatbot Function       | Cloud  | `functions/src/index.ts`                                     |
 
 ---
 
 ## 🚧 IN PROGRESS
 
-<<<<<<< Updated upstream
-| Item | Assigned Agent | Status | Notes |
-|------|----------------|--------|-------|
-| — | — | — | Awaiting assignment |
-=======
-| Item          | Assigned Agent | Status      | Notes                     |
-| ------------- | -------------- | ----------- | ------------------------- |
-| Rate Limiting | Opus-A         | 🔨 Building | Adding to Cloud Functions |
->>>>>>> Stashed changes
+| Item          | Agent  | Status      |
+| ------------- | ------ | ----------- |
+| Vector Search | Opus-A | 🔨 Starting |
 
 ---
 
-## 📝 PENDING (From Roadmap)
+## 📝 REMAINING
 
-<<<<<<< Updated upstream
-| Priority | Item | Complexity | Notes |
-|----------|------|------------|-------|
-| 🔴 High | Sentry Error Tracking | Medium | Add to functions + Next.js |
-| 🔴 High | Rate Limiting | Medium | Prevent abuse on public endpoints |
-| 🟡 Medium | Vector Search Setup | High | Embeddings pipeline for brand docs |
-| 🟡 Medium | Email Sequences | Medium | Trigger on lead status change |
-| 🟡 Medium | Competitor Intel Scraper | High | Crawl + embed content |
-| 🟢 Low | Slack/Discord Alerts | Low | Webhook on high-value leads |
-| 🟢 Low | Firestore Backups | Low | Scheduled exports |
-=======
-| Priority  | Item                     | Complexity | Notes                              |
-| --------- | ------------------------ | ---------- | ---------------------------------- |
-| 🔴 High   | Sentry Error Tracking    | Medium     | Add to functions + Next.js         |
-| 🟡 Medium | Vector Search Setup      | High       | Embeddings pipeline for brand docs |
-| 🟡 Medium | Email Sequences          | Medium     | Trigger on lead status change      |
-| 🟡 Medium | Competitor Intel Scraper | High       | Crawl + embed content              |
-| 🟢 Low    | Slack/Discord Alerts     | Low        | Webhook on high-value leads        |
-| 🟢 Low    | Firestore Backups        | Low        | Scheduled exports                  |
->>>>>>> Stashed changes
+| Priority | Item               | Suggested Agent |
+| -------- | ------------------ | --------------- |
+| 🟡       | Email Sequences    | Cloud           |
+| 🟡       | Competitor Scraper | Cloud           |
+| 🟢       | Firestore Backups  | Either          |
+| 🟢       | Dashboard UI       | Either          |
 
 ---
 
-## 🔒 FILE LOCKS (Claim Before Editing)
+## 🔒 FILE LOCKS
 
-> Agents should claim files here before making edits to prevent conflicts
-
-| File | Locked By | Since | Purpose |
-<<<<<<< Updated upstream
-|------|-----------|-------|---------|
-| — | — | — | — |
-=======
-| ---- | --------- | ----- | ------- |
-| —    | —         | —     | —       |
->>>>>>> Stashed changes
+| File                    | Agent  | Task          |
+| ----------------------- | ------ | ------------- |
+| `src/lib/embeddings.ts` | Opus-A | Vector search |
 
 ---
 
-## 💬 AGENT MESSAGES
+## 💬 MESSAGES
 
-### Opus-A → Other Agent (2024-12-19)
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
-- Completed Phase 2 items from roadmap
-- All builds passing
-- Contact form + lead capture ready for testing
-- Next priority: Sentry integration or vector search
+**Opus-A:** Taking vector search. Cloud - please grab email sequences or competitor scraper.
 
 ---
 
-## 📁 KEY FILES REFERENCE
+## 📁 KEY FILES
 
-<<<<<<< Updated upstream
-| Purpose | Path |
-|---------|------|
-| Flow exports | `src/ai/flows/index.ts` |
-| Cloud Functions | `functions/src/index.ts` |
-| Scheduled Jobs | `functions/src/scheduled.ts` |
-| Contact Form | `src/components/ContactForm.tsx` |
-| Lead API | `src/app/api/leads/submit/route.ts` |
-=======
-| Purpose         | Path                                |
-| --------------- | ----------------------------------- |
-| Flow exports    | `src/ai/flows/index.ts`             |
-| Cloud Functions | `functions/src/index.ts`            |
-| Scheduled Jobs  | `functions/src/scheduled.ts`        |
-| Contact Form    | `src/components/ContactForm.tsx`    |
-| Lead API        | `src/app/api/leads/submit/route.ts` |
->>>>>>> Stashed changes
-
----
-
-## ⚠️ COORDINATION RULES
-
-1. **Check this file** before starting work
-2. **Claim files** in the LOCKS section before editing
-3. **Update COMPLETED** when finishing a task
-4. **Leave messages** for the other agent
-5. **Run builds** before committing: `npm run build` (root) + `cd functions && npm run build`
-6. **Pull frequently** to avoid merge conflicts
+- Functions: `functions/src/index.ts`
+- Scheduled: `functions/src/scheduled.ts`
+- Rate Limit: `functions/src/lib/rate-limit.ts`
+- Slack: `functions/src/lib/slack.ts`
+- Sentry: `functions/src/lib/sentry.ts`

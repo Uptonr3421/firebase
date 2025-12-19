@@ -26,7 +26,11 @@ import {
 } from '../../src/ai/flows';
 
 import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from './lib/rate-limit';
+import { initSentry } from './lib/sentry';
 import { alertHighValueLead } from './lib/slack';
+
+// Initialize Sentry at cold start
+initSentry();
 
 // High-value lead threshold
 const HIGH_VALUE_LEAD_SCORE = 75;
@@ -327,6 +331,97 @@ export const brandPositioning = onCall(
     } catch (error) {
       console.error('FUNCTION_ERROR', {
         function: 'brandPositioning',
+        details: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  }
+);
+
+/**
+ * Semantic Search - Vector similarity search across embeddings
+ * Callable function for searching stored documents
+ */
+export const semanticSearch = onCall(
+  {
+    secrets: [geminiKey],
+    region: 'us-central1',
+    memory: '512MiB',
+    timeoutSeconds: 60,
+  },
+  async (request) => {
+    // Rate limiting for AI flows
+    const clientId = getClientIdentifier(request as never);
+    const rateLimit = await checkRateLimit(clientId, RATE_LIMITS.aiFlow);
+
+    if (!rateLimit.allowed) {
+      throw new HttpsError(
+        'resource-exhausted',
+        `Rate limit exceeded. Try again in ${Math.ceil((rateLimit.retryAfterMs || 60000) / 1000)} seconds.`
+      );
+    }
+
+    try {
+      const { query, limit = 5, minScore = 0.7 } = request.data || {};
+
+      if (!query || typeof query !== 'string') {
+        throw new HttpsError('invalid-argument', 'query string is required');
+      }
+
+      const { searchSimilar } = await import('../../src/lib/embeddings');
+      const results = await searchSimilar(query, limit, minScore);
+
+      return { success: true, data: results };
+    } catch (error) {
+      console.error('FUNCTION_ERROR', {
+        function: 'semanticSearch',
+        details: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  }
+);
+
+/**
+ * Store Embedding - Store a document with its vector embedding
+ * Callable function for indexing documents
+ */
+export const storeEmbeddingDoc = onCall(
+  {
+    secrets: [geminiKey],
+    region: 'us-central1',
+    memory: '512MiB',
+    timeoutSeconds: 60,
+  },
+  async (request) => {
+    // Rate limiting for AI flows
+    const clientId = getClientIdentifier(request as never);
+    const rateLimit = await checkRateLimit(clientId, RATE_LIMITS.aiFlow);
+
+    if (!rateLimit.allowed) {
+      throw new HttpsError(
+        'resource-exhausted',
+        `Rate limit exceeded. Try again in ${Math.ceil((rateLimit.retryAfterMs || 60000) / 1000)} seconds.`
+      );
+    }
+
+    try {
+      const { id, content, metadata = {} } = request.data || {};
+
+      if (!id || typeof id !== 'string') {
+        throw new HttpsError('invalid-argument', 'id string is required');
+      }
+      if (!content || typeof content !== 'string') {
+        throw new HttpsError('invalid-argument', 'content string is required');
+      }
+
+      const { storeEmbedding } = await import('../../src/lib/embeddings');
+      await storeEmbedding(id, content, metadata);
+
+      return { success: true, message: 'Embedding stored successfully', id };
+    } catch (error) {
+      console.error('FUNCTION_ERROR', {
+        function: 'storeEmbeddingDoc',
         details: error instanceof Error ? error.message : String(error),
       });
       throw error;
