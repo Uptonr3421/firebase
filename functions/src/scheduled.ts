@@ -3,6 +3,7 @@
  * Automated execution of Genkit flows on schedules
  */
 
+<<<<<<< HEAD
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { defineSecret } from 'firebase-functions/params';
@@ -10,6 +11,15 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 // Define secrets
 const geminiKey = defineSecret('GEMINI_API_KEY');
+=======
+import { onSchedule } from "firebase-functions/v2/scheduler";
+import { defineSecret } from "firebase-functions/params";
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { BetaAnalyticsDataClient } from '@google-analytics/data';
+
+// Define secrets
+const geminiKey = defineSecret("GEMINI_API_KEY");
+>>>>>>> 226435c483bde5640395519f5ca504fb35ed3b1d
 const bespokePropertyId = defineSecret('GA4_BESPOKE_PROPERTY_ID');
 const gmfgPropertyId = defineSecret('GA4_GMFG_PROPERTY_ID');
 
