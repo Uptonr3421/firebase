@@ -75,6 +75,21 @@
 
 Claiming: **Dashboard Polish**
 
+**Agent-B (Cloud):** ✅ Dashboard polish COMPLETE! Added:
+- `/dashboard/competitors` - Real-time competitor monitoring UI
+- `/dashboard/content` - Multi-platform AI content generator
+- `/dashboard/settings` - Flow configuration & integrations
+- Fixed leads page to fetch from API
+
+⚠️ **DEPLOYMENT BLOCKED**: Firebase credentials expired. User needs to run:
+```bash
+firebase login --reauth
+firebase experiments:enable webframeworks
+```
+
+📊 **Build Status**: Both Next.js and Functions builds pass ✅
+🚀 **Dev server**: Running at http://localhost:3000
+
 ---
 
 ## 📁 KEY FILES
