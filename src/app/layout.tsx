@@ -1,3 +1,6 @@
+import type { Metadata, Viewport } from "next";
+import "./globals.css";
+
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
@@ -28,6 +31,17 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+      </head>
+      <body className="bg-black text-white antialiased font-sans">
+        {children}
+      </body>
       <body className="bg-black font-sans text-white antialiased">{children}</body>
     </html>
   );

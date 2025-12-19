@@ -41,6 +41,7 @@ export const competitorWatchFlow = ai.defineFlow(
   async (input) => {
     try {
       // TODO: Implement actual web scraping / change detection
+      // Use input.competitors and input.checkType when implementing
       const mockChanges: Array<{
         competitor: string;
         changeType: "pricing" | "messaging" | "features" | "design" | "content";
@@ -49,9 +50,9 @@ export const competitorWatchFlow = ai.defineFlow(
         detectedAt: string;
       }> = [
         {
-          competitor: "competitor-a.com",
+          competitor: input.competitors.length > 0 ? input.competitors[0] : "competitor-a.com",
           changeType: "pricing",
-          description: "Updated pricing page with new tier structure",
+          description: `Updated pricing page with new tier structure (${input.checkType} check)`,
           severity: "medium",
           detectedAt: new Date().toISOString(),
         },

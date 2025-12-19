@@ -49,8 +49,13 @@ export const selfHealingFlow = ai.defineFlow(
         { name: "Secret Manager", status: "ok", message: "Secrets accessible" },
       ];
 
-      const hasErrors = services.some((s) => s.status === "error");
-      const hasWarnings = services.some((s) => s.status === "warning");
+      // Filter to specific service if requested, otherwise check all
+      const servicesToCheck = input.specificService
+        ? services.filter(s => s.name === input.specificService)
+        : services;
+
+      const hasErrors = servicesToCheck.some((s) => s.status === "error");
+      const hasWarnings = servicesToCheck.some((s) => s.status === "warning");
 
       const overallStatus: "healthy" | "degraded" | "critical" = hasErrors
         ? "critical"
@@ -62,7 +67,7 @@ export const selfHealingFlow = ai.defineFlow(
       const recommendations: string[] = [];
 
       // Auto-healing logic
-      for (const service of services) {
+      for (const service of servicesToCheck) {
         if (service.status === "error") {
           actionsTaken.push(`Attempted restart of ${service.name}`);
         }
@@ -77,7 +82,7 @@ export const selfHealingFlow = ai.defineFlow(
 
       return {
         status: overallStatus as "healthy" | "degraded" | "critical",
-        services: services.map((s) => ({
+        services: servicesToCheck.map((s) => ({
           name: s.name,
           status: s.status,
           message: s.message,
