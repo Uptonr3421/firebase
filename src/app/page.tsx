@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { functions_api } from "@/lib/firebase";
+import type {
+  MarketingBriefResponse,
+  CompetitorWatchResponse,
+  ContentDrafterResponse,
+  OpportunityScannerResponse,
+  SelfHealingResponse,
+} from "@/lib/types";
 
 export default function Home() {
   const [loading, setLoading] = useState<string | null>(null);
@@ -16,8 +23,9 @@ export default function Home() {
         dateRange: "last7days",
         properties: ["bespoke-ethos", "gmfg"],
       });
-      console.log("Marketing Brief:", result.data);
-      alert(`Brief generated! Summary: ${(result.data as any).summary}`);
+      const data = result.data as MarketingBriefResponse;
+      console.log("Marketing Brief:", data);
+      alert(`Brief generated! Summary: ${data.summary}`);
     } catch (error) {
       console.error("Error generating brief:", error);
       alert("Error generating brief. Check console for details.");
@@ -32,8 +40,9 @@ export default function Home() {
       const result = await functions_api.competitorWatch({
         checkType: "quick",
       });
-      console.log("Competitor Watch:", result.data);
-      alert(`Competitor check complete! ${(result.data as any).summary}`);
+      const data = result.data as CompetitorWatchResponse;
+      console.log("Competitor Watch:", data);
+      alert(`Competitor check complete! ${data.summary}`);
     } catch (error) {
       console.error("Error checking competitors:", error);
       alert("Error checking competitors. Check console for details.");
@@ -50,8 +59,9 @@ export default function Home() {
         contentType: "blog",
         tone: "professional",
       });
-      console.log("Content Draft:", result.data);
-      alert(`Content drafted! Title: ${(result.data as any).title}`);
+      const data = result.data as ContentDrafterResponse;
+      console.log("Content Draft:", data);
+      alert(`Content drafted! Title: ${data.title}`);
     } catch (error) {
       console.error("Error drafting content:", error);
       alert("Error drafting content. Check console for details.");
@@ -67,10 +77,9 @@ export default function Home() {
         sources: ["nglcc", "news"],
         industry: "consulting",
       });
-      console.log("Opportunities:", result.data);
-      alert(
-        `Found ${(result.data as any).totalFound} opportunities! ${(result.data as any).summary}`
-      );
+      const data = result.data as OpportunityScannerResponse;
+      console.log("Opportunities:", data);
+      alert(`Found ${data.totalFound} opportunities! ${data.summary}`);
     } catch (error) {
       console.error("Error scanning opportunities:", error);
       alert("Error scanning opportunities. Check console for details.");
@@ -83,7 +92,8 @@ export default function Home() {
     try {
       setSystemStatus("checking");
       const result = await functions_api.selfHealing({ checkAll: true });
-      console.log("System Health:", result.data);
+      const data = result.data as SelfHealingResponse;
+      console.log("System Health:", data);
       setSystemStatus("online");
     } catch (error) {
       console.error("Error checking system:", error);

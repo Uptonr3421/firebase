@@ -21,7 +21,7 @@ const isProduction = process.env.NODE_ENV === "production";
 // Production: Google Cloud Trace (auto-configured via ADC)
 const traceExporter = new OTLPTraceExporter({
   url: isProduction
-    ? "https://cloudtrace.googleapis.com/v2/projects/studio-4405829326-5e892/traces:batchWrite"
+    ? "https://cloudtrace.googleapis.com/v2/projects/bespokeethos-analytics-475007/traces:batchWrite"
     : "http://localhost:4318/v1/traces",
 });
 
