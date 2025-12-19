@@ -295,6 +295,22 @@ export const submitLead = onCall(
         });
       }
 
+      // Schedule welcome email sequence
+      try {
+        const { scheduleEmailsForLead } = await import('./lib/email');
+        const scheduledCount = await scheduleEmailsForLead(
+          leadRef.id,
+          email.toLowerCase(),
+          name,
+          company || null,
+          'new'
+        );
+        console.log('EMAILS_SCHEDULED', { leadId: leadRef.id, count: scheduledCount });
+      } catch (emailError) {
+        console.error('EMAIL_SCHEDULE_FAILED', { error: String(emailError) });
+        // Don't fail the lead capture if email scheduling fails
+      }
+
       return {
         success: true,
         message: 'Lead captured successfully',
@@ -304,6 +320,92 @@ export const submitLead = onCall(
     } catch (error) {
       console.error('FUNCTION_ERROR', {
         function: 'submitLead',
+        details: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  }
+);
+
+/**
+ * Update Lead Status - Update lead and trigger appropriate email sequences
+ * Callable function for status transitions
+ */
+export const updateLeadStatus = onCall(
+  {
+    region: 'us-central1',
+  },
+  async (request) => {
+    const db = getFirestore();
+
+    try {
+      const { leadId, newStatus } = request.data;
+
+      if (!leadId || !newStatus) {
+        throw new HttpsError('invalid-argument', 'leadId and newStatus are required');
+      }
+
+      const validStatuses = ['new', 'contacted', 'qualified', 'converted', 'lost'];
+      if (!validStatuses.includes(newStatus)) {
+        throw new HttpsError(
+          'invalid-argument',
+          `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+        );
+      }
+
+      // Get current lead
+      const leadRef = db.collection('leads').doc(leadId);
+      const leadDoc = await leadRef.get();
+
+      if (!leadDoc.exists) {
+        throw new HttpsError('not-found', 'Lead not found');
+      }
+
+      const leadData = leadDoc.data()!;
+      const previousStatus = leadData.status;
+
+      // Update lead status
+      await leadRef.update({
+        status: newStatus,
+        previousStatus,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      // Handle email sequences based on status change
+      const { scheduleEmailsForLead, cancelPendingEmails } = await import('./lib/email');
+
+      // Cancel pending nurture emails if converting or lost
+      if (newStatus === 'converted' || newStatus === 'lost') {
+        await cancelPendingEmails(leadId);
+      }
+
+      // Schedule new emails for status-triggered sequences
+      if (newStatus === 'qualified' || newStatus === 'converted') {
+        await scheduleEmailsForLead(
+          leadId,
+          leadData.email,
+          leadData.name,
+          leadData.company,
+          newStatus
+        );
+      }
+
+      console.log('LEAD_STATUS_UPDATED', {
+        leadId,
+        previousStatus,
+        newStatus,
+      });
+
+      return {
+        success: true,
+        message: 'Lead status updated',
+        leadId,
+        previousStatus,
+        newStatus,
+      };
+    } catch (error) {
+      console.error('FUNCTION_ERROR', {
+        function: 'updateLeadStatus',
         details: error instanceof Error ? error.message : String(error),
       });
       throw error;

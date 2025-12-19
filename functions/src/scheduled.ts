@@ -395,3 +395,200 @@ async function fetchTrafficSources(
 function formatDate(date: Date): string {
   return date.toISOString().split('T')[0];
 }
+
+/**
+ * Firestore Backup - Scheduled daily at 2 AM UTC
+ * Exports Firestore collections to Cloud Storage
+ */
+export const scheduledFirestoreBackup = onSchedule(
+  {
+    schedule: '0 2 * * *', // 2 AM UTC daily
+    region: 'us-central1',
+    timeoutSeconds: 540,
+    memory: '256MiB',
+  },
+  async () => {
+    const startTime = Date.now();
+    const db = getFirestore();
+
+    console.log('FIRESTORE_BACKUP_START', { timestamp: new Date().toISOString() });
+
+    try {
+      // Use the Firestore Admin API to export
+      // Note: This requires google-cloud/firestore-admin-client or REST API
+      // For now, we'll use the REST API approach
+      const projectId = process.env.GCLOUD_PROJECT || 'bespokeethos-analytics-475007';
+      const bucketName = `${projectId}-firestore-backups`;
+      const timestamp = new Date().toISOString().split('T')[0];
+      const outputUriPrefix = `gs://${bucketName}/${timestamp}`;
+
+      // Collections to backup
+      const collections = ['leads', 'analytics', 'system', 'cache', 'embeddings', 'competitors'];
+
+      // Import google-auth-library for authentication
+      const { GoogleAuth } = await import('google-auth-library');
+      const auth = new GoogleAuth({
+        scopes: ['https://www.googleapis.com/auth/datastore'],
+      });
+      const client = await auth.getClient();
+
+      // Call Firestore export API
+      const exportUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default):exportDocuments`;
+
+      const response = await client.request({
+        url: exportUrl,
+        method: 'POST',
+        data: {
+          outputUriPrefix,
+          collectionIds: collections,
+        },
+      });
+
+      // Log the operation name for tracking
+      const operationName = (response.data as { name?: string })?.name || 'unknown';
+
+      // Store backup metadata
+      await db.collection('system').doc('backups').set(
+        {
+          lastBackup: FieldValue.serverTimestamp(),
+          lastBackupStatus: 'success',
+          lastBackupOperation: operationName,
+          lastBackupUri: outputUriPrefix,
+          collections,
+        },
+        { merge: true }
+      );
+
+      const durationMs = Date.now() - startTime;
+
+      console.log('FIRESTORE_BACKUP_SUCCESS', {
+        operationName,
+        outputUriPrefix,
+        collections,
+        durationMs,
+      });
+    } catch (error) {
+      console.error('FIRESTORE_BACKUP_ERROR', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+
+      // Store error state
+      await db
+        .collection('system')
+        .doc('backups')
+        .set(
+          {
+            lastBackup: FieldValue.serverTimestamp(),
+            lastBackupStatus: 'error',
+            lastBackupError: error instanceof Error ? error.message : String(error),
+          },
+          { merge: true }
+        );
+
+      throw error;
+    }
+  }
+);
+
+/**
+ * Rate Limit Cleanup - Scheduled every hour
+ * Cleans up expired rate limit entries from Firestore
+ */
+export const scheduledRateLimitCleanup = onSchedule(
+  {
+    schedule: '0 * * * *', // Every hour
+    region: 'us-central1',
+    timeoutSeconds: 60,
+    memory: '256MiB',
+  },
+  async () => {
+    const { cleanupRateLimits } = await import('./lib/rate-limit');
+
+    console.log('RATE_LIMIT_CLEANUP_START', { timestamp: new Date().toISOString() });
+
+    try {
+      const deletedCount = await cleanupRateLimits();
+
+      console.log('RATE_LIMIT_CLEANUP_SUCCESS', {
+        deletedCount,
+      });
+    } catch (error) {
+      console.error('RATE_LIMIT_CLEANUP_ERROR', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  }
+);
+
+// Define SendGrid secret
+const sendgridApiKey = defineSecret('SENDGRID_API_KEY');
+
+/**
+ * Email Processor - Scheduled every 15 minutes
+ * Processes pending scheduled emails and sends them
+ */
+export const scheduledEmailProcessor = onSchedule(
+  {
+    schedule: '*/15 * * * *', // Every 15 minutes
+    region: 'us-central1',
+    timeoutSeconds: 120,
+    memory: '256MiB',
+    secrets: [sendgridApiKey],
+  },
+  async () => {
+    const { getPendingEmailsToSend, sendEmail, markEmailSent, markEmailFailed } =
+      await import('./lib/email');
+
+    console.log('EMAIL_PROCESSOR_START', { timestamp: new Date().toISOString() });
+
+    try {
+      const pendingEmails = await getPendingEmailsToSend();
+
+      if (pendingEmails.length === 0) {
+        console.log('EMAIL_PROCESSOR_COMPLETE', { processed: 0 });
+        return;
+      }
+
+      let sent = 0;
+      let failed = 0;
+
+      for (const email of pendingEmails) {
+        if (!email.id) continue;
+
+        const result = await sendEmail(
+          {
+            to: email.email,
+            toName: email.name,
+            subject: email.subject,
+            template: email.template,
+            variables: email.variables,
+          },
+          sendgridApiKey.value()
+        );
+
+        if (result.success) {
+          await markEmailSent(email.id);
+          sent++;
+        } else {
+          await markEmailFailed(email.id, result.error || 'Unknown error');
+          failed++;
+        }
+
+        // Small delay between sends to avoid rate limits
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      console.log('EMAIL_PROCESSOR_COMPLETE', {
+        processed: pendingEmails.length,
+        sent,
+        failed,
+      });
+    } catch (error) {
+      console.error('EMAIL_PROCESSOR_ERROR', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  }
+);
