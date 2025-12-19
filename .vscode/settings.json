@@ -1,7 +1,8 @@
 {
   // ═══════════════════════════════════════════════════════════
   // FIREBASE WORKSPACE - Prometheus AI (Genkit + Vertex AI)
-  // Project: studio-4405829326-5e892
+  // Project: bespokeethos-analytics-475007
+  // Dual System: Bespoke Ethos + GMFG
   // Optimized for: Mobile-First, Autonomous Agents, Parallel Processing
   // ═══════════════════════════════════════════════════════════
 
@@ -163,7 +164,7 @@
   "geminicodeassist.cloudcode.duetAI.enableCodeLens": true,
 
   // GOOGLE CLOUD CODE
-  "cloudcode.project": "studio-4405829326-5e892",
+  "cloudcode.project": "bespokeethos-analytics-475007",
   "cloudcode.cloudBilling.automaticBillingAccountSelection": true,
 
   // GENKIT

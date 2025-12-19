@@ -1,0 +1,54 @@
+{
+  "name": "autonomous-research",
+  "version": "1.0.0",
+  "description": "Autonomous research playbook for gathering and organizing findings",
+  "triggers": ["research-request", "investigate", "find-solution"],
+  "steps": [
+    {
+      "id": 1,
+      "name": "identify-topic",
+      "action": "Identify research topic and key questions",
+      "autoExecute": true
+    },
+    {
+      "id": 2,
+      "name": "search-docs",
+      "action": "Search official documentation sources",
+      "autoExecute": true,
+      "parallel": true
+    },
+    {
+      "id": 3,
+      "name": "search-codebase",
+      "action": "Search existing codebase for patterns",
+      "autoExecute": true,
+      "parallel": true
+    },
+    {
+      "id": 4,
+      "name": "analyze-findings",
+      "action": "Analyze and categorize findings",
+      "autoExecute": true
+    },
+    {
+      "id": 5,
+      "name": "create-summary",
+      "action": "Create structured summary with recommendations",
+      "autoExecute": true
+    },
+    {
+      "id": 6,
+      "name": "save-to-memory",
+      "action": "Save findings to memory for future recall",
+      "autoExecute": true
+    }
+  ],
+  "output": {
+    "format": "markdown",
+    "location": ".antigravity/research",
+    "naming": "{topic}-{date}.md"
+  },
+  "asyncExecution": true,
+  "continueOnSuccess": true,
+  "notifyOnComplete": true
+}

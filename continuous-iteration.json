@@ -1,0 +1,57 @@
+{
+  "name": "continuous-iteration",
+  "version": "1.0.0",
+  "description": "Autonomous continuous iteration playbook for non-stop development",
+  "triggers": ["build", "iterate", "improve", "refactor"],
+  "mode": "autonomous",
+  "maxIterations": 10,
+  "steps": [
+    {
+      "id": 1,
+      "name": "analyze-current",
+      "action": "Analyze current state and identify improvements",
+      "autoExecute": true
+    },
+    {
+      "id": 2,
+      "name": "plan-changes",
+      "action": "Plan changes with minimal risk",
+      "autoExecute": true
+    },
+    {
+      "id": 3,
+      "name": "implement",
+      "action": "Implement changes incrementally",
+      "autoExecute": true
+    },
+    {
+      "id": 4,
+      "name": "validate",
+      "action": "Validate changes compile and pass lint",
+      "autoExecute": true
+    },
+    {
+      "id": 5,
+      "name": "test",
+      "action": "Run relevant tests",
+      "autoExecute": true
+    },
+    {
+      "id": 6,
+      "name": "evaluate",
+      "action": "Evaluate if more iterations needed",
+      "autoExecute": true,
+      "continueCondition": "improvements_available"
+    }
+  ],
+  "safeguards": {
+    "maxFilesPerIteration": 5,
+    "pauseOnError": true,
+    "pauseOnCritical": true,
+    "requireApproval": ["delete", "security-change", "config-change"]
+  },
+  "asyncExecution": true,
+  "parallelSteps": ["2", "3"],
+  "notifyOnComplete": true,
+  "notifyOnActionRequired": true
+}

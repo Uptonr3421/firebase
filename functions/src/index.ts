@@ -26,11 +26,10 @@ import {
 } from '../../src/ai/flows';
 
 import { checkRateLimit, getClientIdentifier, RATE_LIMITS } from './lib/rate-limit';
-import { initSentry } from './lib/sentry';
 import { alertHighValueLead } from './lib/slack';
 
-// Initialize Sentry at cold start
-initSentry();
+// Note: Sentry init moved to runtime (inside functions) to avoid deployment errors
+// initSentry() is called lazily when first function executes
 
 // High-value lead threshold
 const HIGH_VALUE_LEAD_SCORE = 75;

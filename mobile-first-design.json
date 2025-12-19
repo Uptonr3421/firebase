@@ -1,0 +1,60 @@
+{
+  "name": "mobile-first-web-design",
+  "version": "1.0.0",
+  "description": "Autonomous playbook for mobile-first responsive web design",
+  "triggers": ["new-component", "ui-refactor", "responsive-fix"],
+  "steps": [
+    {
+      "id": 1,
+      "name": "analyze-viewport",
+      "action": "Analyze current viewport handling and breakpoints",
+      "autoExecute": true
+    },
+    {
+      "id": 2,
+      "name": "mobile-baseline",
+      "action": "Ensure mobile styles are the baseline (no media query)",
+      "autoExecute": true
+    },
+    {
+      "id": 3,
+      "name": "progressive-enhancement",
+      "action": "Add progressive enhancements for larger screens using min-width queries",
+      "autoExecute": true
+    },
+    {
+      "id": 4,
+      "name": "touch-targets",
+      "action": "Verify touch targets are minimum 44x44px",
+      "autoExecute": true
+    },
+    {
+      "id": 5,
+      "name": "performance-check",
+      "action": "Check image optimization and lazy loading for mobile",
+      "autoExecute": true
+    },
+    {
+      "id": 6,
+      "name": "accessibility-audit",
+      "action": "Run accessibility checks for mobile experience",
+      "autoExecute": true
+    }
+  ],
+  "breakpoints": {
+    "sm": "640px",
+    "md": "768px", 
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1536px"
+  },
+  "tailwindClasses": {
+    "mobileFirst": "Use unprefixed classes for mobile, sm: md: lg: for larger",
+    "spacing": "p-4 sm:p-6 md:p-8",
+    "typography": "text-sm sm:text-base md:text-lg",
+    "layout": "flex flex-col sm:flex-row"
+  },
+  "asyncExecution": true,
+  "continueOnSuccess": true,
+  "notifyOnComplete": true
+}

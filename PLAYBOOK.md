@@ -2,9 +2,9 @@
 
 ## Quick Reference for Future Sessions
 
-**Project:** bespokeethos-analytics-475007  
-**Owner:** contact@bespokeethos.com  
-**Region:** us-central1  
+**Project:** bespokeethos-analytics-475007
+**Owner:** contact@bespokeethos.com
+**Region:** us-central1
 **Auth Method:** Browser (interactive)
 
 ---
@@ -48,6 +48,7 @@ gcloud services enable \
 Go to: https://console.cloud.google.com/security/secret-manager?project=bespokeethos-analytics-475007
 
 Add these secrets:
+
 - `GEMINI_API_KEY`
 - `TWILIO_ACCOUNT_SID`
 - `TWILIO_AUTH_TOKEN`
@@ -101,10 +102,12 @@ firebase deploy --only firestore
 ## 7. TRACING
 
 ### Local (AI Toolkit)
+
 1. VS Code Command: `AI Toolkit: Open Trace Viewer`
 2. Traces sent to `localhost:4318`
 
 ### Production (Cloud Trace)
+
 - Auto-configured via Application Default Credentials
 - View at: https://console.cloud.google.com/traces?project=bespokeethos-analytics-475007
 
@@ -112,14 +115,14 @@ firebase deploy --only firestore
 
 ## 8. BROWSER SHORTCUTS
 
-| Service | URL |
-|---------|-----|
-| Firebase Console | https://console.firebase.google.com/project/bespokeethos-analytics-475007 |
-| Cloud Functions | https://console.cloud.google.com/functions?project=bespokeethos-analytics-475007 |
-| Vertex AI | https://console.cloud.google.com/vertex-ai?project=bespokeethos-analytics-475007 |
-| Secret Manager | https://console.cloud.google.com/security/secret-manager?project=bespokeethos-analytics-475007 |
-| Cloud Trace | https://console.cloud.google.com/traces?project=bespokeethos-analytics-475007 |
-| Firestore | https://console.cloud.google.com/firestore?project=bespokeethos-analytics-475007 |
+| Service          | URL                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------- |
+| Firebase Console | https://console.firebase.google.com/project/bespokeethos-analytics-475007                      |
+| Cloud Functions  | https://console.cloud.google.com/functions?project=bespokeethos-analytics-475007               |
+| Vertex AI        | https://console.cloud.google.com/vertex-ai?project=bespokeethos-analytics-475007               |
+| Secret Manager   | https://console.cloud.google.com/security/secret-manager?project=bespokeethos-analytics-475007 |
+| Cloud Trace      | https://console.cloud.google.com/traces?project=bespokeethos-analytics-475007                  |
+| Firestore        | https://console.cloud.google.com/firestore?project=bespokeethos-analytics-475007               |
 
 ---
 
@@ -146,13 +149,13 @@ c:\firebase\
 
 ```typescript
 // Default (90% - cheap & fast)
-'vertexai/gemini-2.0-flash'
+'vertexai/gemini-2.0-flash';
 
 // Escalation (10% - complex decisions)
-'vertexai/gemini-2.0-pro'
+'vertexai/gemini-2.0-pro';
 
 // Embeddings
-'vertexai/text-embedding-004'
+'vertexai/text-embedding-004';
 ```
 
 ---

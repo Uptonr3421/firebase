@@ -1,0 +1,43 @@
+{
+  "name": "preinject-safety-and-tooling",
+  "version": "1.0.0",
+  "description": "Enforce safe preinject behavior (allowlist-only) and encourage use of performance/accessibility tools.",
+  "triggers": ["browser", "debug", "ui", "a11y", "performance"],
+  "steps": [
+    {
+      "id": 1,
+      "name": "confirm-allowlist",
+      "action": "Only preinject on allowlisted domains in .antigravity/browserAllowlist.txt. Never enable inject-on-all-sites.",
+      "autoExecute": true
+    },
+    {
+      "id": 2,
+      "name": "encourage-axe",
+      "action": "When working on UI, run Axe (Chrome) on the current page and note issues before shipping.",
+      "autoExecute": false
+    },
+    {
+      "id": 3,
+      "name": "encourage-lighthouse",
+      "action": "For slow pages, run Lighthouse and record top 3 opportunities (perf + best practices).",
+      "autoExecute": false
+    },
+    {
+      "id": 4,
+      "name": "encourage-tracing",
+      "action": "If AI flows feel slow, open Trace Viewer (OTLP localhost:4318) and capture a trace for the slow request.",
+      "autoExecute": false
+    },
+    {
+      "id": 5,
+      "name": "tooling-catalog",
+      "action": "Use .antigravity/tools-catalog.md as the authoritative list of design/debug tools and MCP usage. When noting findings, capture: tool used, issue found, and next action.",
+      "autoExecute": true
+    }
+  ],
+  "safeguards": {
+    "requireApproval": ["global-injection", "inject-all-sites", "credential-capture"],
+    "pauseOnCritical": true
+  },
+  "notifyOnComplete": true
+}
