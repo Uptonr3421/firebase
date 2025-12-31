@@ -43,3 +43,4 @@ coverage/
 
 # Secret identifiers
 .env.secrets
+.env.vercel-secrets
